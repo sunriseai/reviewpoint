@@ -4,7 +4,7 @@ Use the service as a decision component. The core API has no dependency on the e
 
 ## Exchange
 
-All resource paths below are under `/api/v1/projects/{project}`. Every mutation requires a bearer identity and `Idempotency-Key`. Keep the same key and body when retrying an uncertain request; a different body conflicts.
+All resource paths below are under `/api/v1/projects/{project}`. Every mutation requires a bearer identity and an `Idempotency-Key` containing 1–256 characters. Missing, empty or oversized keys return HTTP 400 `invalid_request_key`. Keep the same key and body when retrying an uncertain request; a different body conflicts. The example host retains suffix-based child keys when they fit and deterministically hashes longer keys with their operation, so acknowledgement and execution reporting remain distinct and retryable.
 
 1. `POST /submissions`: supply a stable host/workflow/case/checkpoint reference, host revision, work, context, evidence and exact proposed action. Set `expected_submission_id` to the prior submission or null for a new case.
 2. `POST /cases/{case}/assessments`: send the new submission ID, an exact profile reference and the current review token. Poll the returned status URL.

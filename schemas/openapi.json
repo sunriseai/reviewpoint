@@ -3274,6 +3274,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -3857,6 +3859,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -4180,6 +4184,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -4359,6 +4365,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -4682,6 +4690,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -5312,6 +5322,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -5482,6 +5494,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -6010,6 +6024,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -6342,6 +6358,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -6682,6 +6700,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }
@@ -6996,6 +7016,8 @@
                   "type": "null"
                 }
               ],
+              "maxLength": 256,
+              "minLength": 1,
               "title": "Idempotency-Key"
             }
           }

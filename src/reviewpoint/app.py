@@ -16,6 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from . import models as m
+from .idempotency import request_key
 from .identity import DemoIdentity, Principal, ServiceError, access, host_access
 from .service import Service, get_case, one, review, version
 from .storage import dumps, uid, unpack
@@ -159,13 +160,6 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
         if not authorization or not authorization.startswith("Bearer "):
             raise ServiceError(401, "unauthenticated", "Supply a demo bearer credential.")
         return identity.authenticate(authorization[7:])
-
-    def request_key(idempotency_key: Annotated[str | None, Header()] = None) -> str:
-        if not idempotency_key or len(idempotency_key) > 256:
-            raise ServiceError(
-                400, "request_key_required", "Idempotency-Key must contain 1–256 characters."
-            )
-        return idempotency_key
 
     prefix = "/api/v1/projects/{project}"
 
