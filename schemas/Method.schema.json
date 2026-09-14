@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "enum": [
+        "required_values",
+        "equal_values",
+        "reconcile_records",
+        "evidence_binding",
+        "semantic_review"
+      ],
+      "title": "Id",
+      "type": "string"
+    },
+    "parameters": {
+      "additionalProperties": true,
+      "title": "Parameters",
+      "type": "object"
+    },
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "title": "Method",
+  "type": "object"
+}

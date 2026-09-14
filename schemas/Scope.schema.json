@@ -1,0 +1,31 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "action_types": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Action Types",
+      "type": "array"
+    },
+    "work_types": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Work Types",
+      "type": "array"
+    }
+  },
+  "required": [
+    "work_types",
+    "action_types"
+  ],
+  "title": "Scope",
+  "type": "object"
+}

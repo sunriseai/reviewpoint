@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "finding_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "question": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "requirement_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Requirement Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "question",
+    "requirement_id",
+    "finding_id"
+  ],
+  "title": "Question",
+  "type": "object"
+}

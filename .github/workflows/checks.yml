@@ -1,0 +1,40 @@
+name: Reviewpoint checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  service:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked --extra openai --python ${{ matrix.python }}
+      - run: uv run --frozen --offline pytest -q
+      - run: uv run --frozen --offline ruff check src tests tools examples
+      - run: uv run --frozen --offline ruff format --check src tests tools examples
+      - run: uv run --frozen --offline mypy src/reviewpoint
+      - run: uv run --frozen --offline reviewpoint export-contracts --check
+      - run: uv run --frozen --offline python tools/check_docs.py
+      - run: uv run --frozen --offline python tools/check_release.py
+      - run: uv build
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --prefix frontend
+      - run: npm run format:check --prefix frontend
+      - run: npm test --prefix frontend
+      - run: npm run build --prefix frontend
+      - run: git diff --exit-code -- src/reviewpoint/assets
+      - run: test -z "$(git ls-files --others --exclude-standard src/reviewpoint/assets)"

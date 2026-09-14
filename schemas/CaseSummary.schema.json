@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "checkpoint_key": {
+      "title": "Checkpoint Key",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "external_case_id": {
+      "title": "External Case Id",
+      "type": "string"
+    },
+    "host_id": {
+      "title": "Host Id",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "state": {
+      "title": "State",
+      "type": "string"
+    },
+    "summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Summary"
+    },
+    "workflow_id": {
+      "title": "Workflow Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "case_id",
+    "project_id",
+    "host_id",
+    "workflow_id",
+    "external_case_id",
+    "checkpoint_key",
+    "created_at",
+    "state",
+    "summary"
+  ],
+  "title": "CaseSummary",
+  "type": "object"
+}

@@ -1,0 +1,92 @@
+{
+  "name": "Work release guidelines",
+  "owner_id": "[\"human\",\"reviewpoint-local-demo\",\"owner\"]",
+  "definition": {
+    "scope": {
+      "work_types": [
+        "work_item"
+      ],
+      "action_types": [
+        "release_work"
+      ]
+    },
+    "risks": [
+      {
+        "applies_to": "proceed",
+        "id": "incomplete",
+        "title": "Incomplete work",
+        "consequence": "Incomplete work reaches the next step"
+      },
+      {
+        "applies_to": "proceed",
+        "id": "rework",
+        "title": "Additional rework",
+        "consequence": "Additional effort to correct released work"
+      },
+      {
+        "applies_to": "hold",
+        "id": "delay",
+        "title": "Processing delay",
+        "consequence": "The next step waits for a correction"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "summary",
+        "description": "The work has a summary",
+        "risk_ids": [
+          "incomplete"
+        ],
+        "applicability": {
+          "kind": "always",
+          "pointer": null,
+          "value": null
+        },
+        "check": {
+          "id": "required_values",
+          "version": 1,
+          "parameters": {
+            "pointers": [
+              "/work/summary"
+            ]
+          }
+        },
+        "exception": {
+          "allowed_statuses": [],
+          "role": "owner"
+        }
+      },
+      {
+        "id": "complete",
+        "description": "All expected items are supplied",
+        "risk_ids": [
+          "incomplete",
+          "rework"
+        ],
+        "applicability": {
+          "kind": "always",
+          "pointer": null,
+          "value": null
+        },
+        "check": {
+          "id": "equal_values",
+          "version": 1,
+          "parameters": {
+            "left": "/work/expected_items",
+            "right": "/work/supplied_items"
+          }
+        },
+        "exception": {
+          "allowed_statuses": [],
+          "role": "owner"
+        }
+      }
+    ],
+    "review_rules": {
+      "evidence_max_age_seconds": 86400,
+      "decision_max_age_seconds": 3600,
+      "permitted_condition_types": []
+    }
+  },
+  "reason": "Initial illustrative guidelines for synthetic work"
+}

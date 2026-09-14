@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "Method": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            "required_values",
+            "equal_values",
+            "reconcile_records",
+            "evidence_binding",
+            "semantic_review"
+          ],
+          "title": "Id",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "version": {
+          "const": 1,
+          "default": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Method",
+      "type": "object"
+    },
+    "Reference": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Id"
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pointer"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        },
+        "source": {
+          "enum": [
+            "work",
+            "context",
+            "evidence"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "Reference",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "explanation": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Explanation",
+      "type": "string"
+    },
+    "method": {
+      "$ref": "#/$defs/Method"
+    },
+    "references": {
+      "items": {
+        "$ref": "#/$defs/Reference"
+      },
+      "title": "References",
+      "type": "array"
+    },
+    "requirement_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Requirement Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "met",
+        "unmet",
+        "unknown",
+        "not_applicable"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "requirement_id",
+    "status",
+    "explanation",
+    "method",
+    "references"
+  ],
+  "title": "RequirementResult",
+  "type": "object"
+}

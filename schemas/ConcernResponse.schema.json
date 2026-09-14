@@ -1,0 +1,90 @@
+{
+  "$defs": {
+    "ProfileRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ],
+      "title": "ProfileRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "corrective_assessment_id": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corrective Assessment Id"
+    },
+    "corrective_profile_ref": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProfileRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "corrective_submission_id": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corrective Submission Id"
+    },
+    "expected_concern_version": {
+      "minimum": 1,
+      "title": "Expected Concern Version",
+      "type": "integer"
+    },
+    "message": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "resolve": {
+      "default": false,
+      "title": "Resolve",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "expected_concern_version",
+    "message"
+  ],
+  "title": "ConcernResponse",
+  "type": "object"
+}

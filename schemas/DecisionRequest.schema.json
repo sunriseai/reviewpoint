@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "propertyNames": {
+            "const": "check_id"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "type": {
+          "const": "host_check",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "description",
+        "parameters"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "ExceptionRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "rationale": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "requirement_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Requirement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "rationale"
+      ],
+      "title": "ExceptionRequest",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "answer": {
+      "enum": [
+        "yes",
+        "no"
+      ],
+      "title": "Answer",
+      "type": "string"
+    },
+    "assessment_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "conditions": {
+      "items": {
+        "$ref": "#/$defs/Condition"
+      },
+      "title": "Conditions",
+      "type": "array"
+    },
+    "exceptions": {
+      "items": {
+        "$ref": "#/$defs/ExceptionRequest"
+      },
+      "title": "Exceptions",
+      "type": "array"
+    },
+    "expected_review_token": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Expected Review Token",
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "supersedes_decision_id": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Decision Id"
+    },
+    "valid_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Valid Until"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "expected_review_token",
+    "answer",
+    "rationale"
+  ],
+  "title": "DecisionRequest",
+  "type": "object"
+}

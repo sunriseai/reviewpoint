@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "applies_to": {
+      "enum": [
+        "proceed",
+        "hold",
+        "both"
+      ],
+      "title": "Applies To",
+      "type": "string"
+    },
+    "consequence": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Consequence",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "applies_to",
+    "id",
+    "title",
+    "consequence"
+  ],
+  "title": "Risk",
+  "type": "object"
+}

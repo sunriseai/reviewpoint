@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "default": "always",
+      "enum": [
+        "always",
+        "equals"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "pointer": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pointer"
+    },
+    "value": {
+      "default": null,
+      "title": "Value"
+    }
+  },
+  "title": "Applicability",
+  "type": "object"
+}

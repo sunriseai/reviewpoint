@@ -1,0 +1,168 @@
+{
+  "$defs": {
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "propertyNames": {
+            "const": "check_id"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "type": {
+          "const": "host_check",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "description",
+        "parameters"
+      ],
+      "title": "Condition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "actor_id": {
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Answer"
+    },
+    "assessment_id": {
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "authority": {
+      "additionalProperties": true,
+      "title": "Authority",
+      "type": "object"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "conditions": {
+      "items": {
+        "$ref": "#/$defs/Condition"
+      },
+      "title": "Conditions",
+      "type": "array"
+    },
+    "content_hash": {
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "decision_seq": {
+      "title": "Decision Seq",
+      "type": "integer"
+    },
+    "kind": {
+      "enum": [
+        "decision",
+        "revocation"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "rationale": {
+      "title": "Rationale",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "request_key": {
+      "title": "Request Key",
+      "type": "string"
+    },
+    "supersedes_decision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Supersedes Decision Id"
+    },
+    "valid_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Valid Until"
+    }
+  },
+  "required": [
+    "decision_seq",
+    "decision_id",
+    "project_id",
+    "case_id",
+    "assessment_id",
+    "request_key",
+    "kind",
+    "answer",
+    "rationale",
+    "actor_id",
+    "authority",
+    "conditions",
+    "supersedes_decision_id",
+    "recorded_at",
+    "valid_until",
+    "content_hash"
+  ],
+  "title": "DecisionRecord",
+  "type": "object"
+}

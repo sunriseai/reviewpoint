@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "checkpoint_key": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Checkpoint Key",
+      "type": "string"
+    },
+    "external_case_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "External Case Id",
+      "type": "string"
+    },
+    "host_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Host Id",
+      "type": "string"
+    },
+    "workflow_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Workflow Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "host_id",
+    "workflow_id",
+    "external_case_id",
+    "checkpoint_key"
+  ],
+  "title": "CaseRef",
+  "type": "object"
+}

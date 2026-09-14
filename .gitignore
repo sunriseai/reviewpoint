@@ -1,0 +1,23 @@
+.DS_Store
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+.workspace/
+output/
+dist/
+*.egg-info/
+.env
+.env.*
+!.env.example
+frontend/node_modules/
+*.sqlite*
+*.server.lock
+demo-credentials.json
+
+# Local review artifacts
+/tmp/
+/reviewpoint-public-release-review.md
+/reviewpoint-architecture-threatmodel.json

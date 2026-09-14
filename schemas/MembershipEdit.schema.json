@@ -1,0 +1,44 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "active": {
+      "title": "Active",
+      "type": "boolean"
+    },
+    "actor_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "expected_version": {
+      "minimum": 0,
+      "title": "Expected Version",
+      "type": "integer"
+    },
+    "reason": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "reviewer",
+        "approver",
+        "owner"
+      ],
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "required": [
+    "actor_id",
+    "role",
+    "active",
+    "expected_version",
+    "reason"
+  ],
+  "title": "MembershipEdit",
+  "type": "object"
+}

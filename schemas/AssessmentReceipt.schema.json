@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "assessment_id": {
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "status": {
+      "const": "pending",
+      "title": "Status",
+      "type": "string"
+    },
+    "status_url": {
+      "title": "Status Url",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "status",
+    "status_url"
+  ],
+  "title": "AssessmentReceipt",
+  "type": "object"
+}

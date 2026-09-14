@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "parameters": {
+      "additionalProperties": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "propertyNames": {
+        "const": "check_id"
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "type": {
+      "const": "host_check",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "description",
+    "parameters"
+  ],
+  "title": "Condition",
+  "type": "object"
+}

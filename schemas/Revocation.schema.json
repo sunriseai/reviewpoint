@@ -1,0 +1,23 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "expected_review_token": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Expected Review Token",
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    }
+  },
+  "required": [
+    "expected_review_token",
+    "rationale"
+  ],
+  "title": "Revocation",
+  "type": "object"
+}

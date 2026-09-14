@@ -1,0 +1,51 @@
+{
+  "$defs": {
+    "ProfileRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ],
+      "title": "ProfileRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "expected_review_token": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Expected Review Token",
+      "type": "string"
+    },
+    "profile_ref": {
+      "$ref": "#/$defs/ProfileRef"
+    },
+    "submission_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Submission Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "submission_id",
+    "profile_ref",
+    "expected_review_token"
+  ],
+  "title": "AssessmentRequest",
+  "type": "object"
+}

@@ -1,0 +1,84 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "content": {
+      "maxLength": 100000,
+      "minLength": 1,
+      "title": "Content",
+      "type": "string"
+    },
+    "content_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Hash"
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "media_type": {
+      "default": "text/plain",
+      "enum": [
+        "text/plain",
+        "text/markdown",
+        "application/json"
+      ],
+      "title": "Media Type",
+      "type": "string"
+    },
+    "original_artifact_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Artifact Hash"
+    },
+    "scope": {
+      "default": "Selected source excerpt; not a complete original artifact",
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "source_uri": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Source Uri",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "source_uri",
+    "captured_at",
+    "content"
+  ],
+  "title": "Evidence",
+  "type": "object"
+}

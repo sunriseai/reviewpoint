@@ -1,0 +1,23 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "requirement_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Requirement Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "requirement_id",
+    "rationale"
+  ],
+  "title": "ExceptionRequest",
+  "type": "object"
+}

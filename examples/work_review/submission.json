@@ -1,0 +1,39 @@
+{
+  "case_ref": {
+    "host_id": "example-host",
+    "workflow_id": "work-review",
+    "external_case_id": "WORK-001",
+    "checkpoint_key": "release"
+  },
+  "expected_submission_id": null,
+  "host_revision": "revision-1",
+  "work_type": "work_item",
+  "summary": "WORK-001 \u00b7 Work release",
+  "proposed_action": {
+    "type": "release_work",
+    "label": "Release this work to the next step.",
+    "target": "simulated-next-step",
+    "parameters": {}
+  },
+  "work": {
+    "summary": "A work package ready for its next step",
+    "expected_items": 4,
+    "supplied_items": 3
+  },
+  "context": {
+    "source": "Synthetic example host; no real work is executed"
+  },
+  "evidence": [
+    {
+      "id": "source",
+      "title": "Supplied work snapshot",
+      "media_type": "application/json",
+      "source_uri": "example:WORK-001",
+      "captured_at": "2026-09-14T00:00:00Z",
+      "content": "{\"expected_items\":4,\"summary\":\"A work package ready for its next step\",\"supplied_items\":3}",
+      "content_hash": null,
+      "original_artifact_hash": null,
+      "scope": "Selected source excerpt; not a complete original artifact"
+    }
+  ]
+}

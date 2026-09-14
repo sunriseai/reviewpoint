@@ -1,0 +1,29 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "decision_max_age_seconds": {
+      "default": 3600,
+      "maximum": 31536000,
+      "minimum": 1,
+      "title": "Decision Max Age Seconds",
+      "type": "integer"
+    },
+    "evidence_max_age_seconds": {
+      "default": 86400,
+      "maximum": 31536000,
+      "minimum": 1,
+      "title": "Evidence Max Age Seconds",
+      "type": "integer"
+    },
+    "permitted_condition_types": {
+      "items": {
+        "const": "host_check",
+        "type": "string"
+      },
+      "title": "Permitted Condition Types",
+      "type": "array"
+    }
+  },
+  "title": "ReviewRules",
+  "type": "object"
+}

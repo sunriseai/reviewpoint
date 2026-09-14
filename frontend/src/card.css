@@ -1,0 +1,52 @@
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) important;
+@source "./";
+
+/* Local reset: the host demo keeps its existing styles and navigation. */
+.reviewpoint-card {
+  font:
+    15px/1.5 system-ui,
+    sans-serif;
+  color: #1c2b32;
+}
+.reviewpoint-card :where(h2, h3, p, ul, section, article) {
+  margin: 0;
+}
+.reviewpoint-card :where(button, input, textarea) {
+  font: inherit;
+}
+.reviewpoint-card :where(button, a, summary, textarea):focus-visible {
+  outline: 3px solid #337866;
+  outline-offset: 3px;
+}
+.reviewpoint-card :where(button) {
+  cursor: pointer;
+  border-style: solid;
+}
+.reviewpoint-card :where(button):disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+.reviewpoint-card :where(svg) {
+  flex-shrink: 0;
+}
+.reviewpoint-card :where(ul) {
+  padding-left: 1.1em;
+  list-style: disc;
+}
+.reviewpoint-card :where(pre) {
+  margin: 0;
+}
+.reviewpoint-card *,
+.reviewpoint-card *::before,
+.reviewpoint-card *::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+}
+.reviewpoint-card header span {
+  font: inherit;
+  margin: 0;
+  display: inline !important;
+}

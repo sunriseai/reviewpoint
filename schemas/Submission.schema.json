@@ -1,0 +1,229 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "target": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        },
+        "type": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "label",
+        "target"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "CaseRef": {
+      "additionalProperties": false,
+      "properties": {
+        "checkpoint_key": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Checkpoint Key",
+          "type": "string"
+        },
+        "external_case_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "External Case Id",
+          "type": "string"
+        },
+        "host_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Host Id",
+          "type": "string"
+        },
+        "workflow_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "host_id",
+        "workflow_id",
+        "external_case_id",
+        "checkpoint_key"
+      ],
+      "title": "CaseRef",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "captured_at": {
+          "format": "date-time",
+          "title": "Captured At",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "content_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "media_type": {
+          "default": "text/plain",
+          "enum": [
+            "text/plain",
+            "text/markdown",
+            "application/json"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "original_artifact_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Artifact Hash"
+        },
+        "scope": {
+          "default": "Selected source excerpt; not a complete original artifact",
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "source_uri": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Source Uri",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "source_uri",
+        "captured_at",
+        "content"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "case_ref": {
+      "$ref": "#/$defs/CaseRef"
+    },
+    "context": {
+      "additionalProperties": true,
+      "title": "Context",
+      "type": "object"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "maxItems": 100,
+      "title": "Evidence",
+      "type": "array"
+    },
+    "expected_submission_id": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Expected Submission Id"
+    },
+    "host_revision": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Host Revision",
+      "type": "string"
+    },
+    "proposed_action": {
+      "$ref": "#/$defs/Action"
+    },
+    "summary": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "work": {
+      "additionalProperties": true,
+      "title": "Work",
+      "type": "object"
+    },
+    "work_type": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Work Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "case_ref",
+    "expected_submission_id",
+    "host_revision",
+    "work_type",
+    "summary",
+    "proposed_action",
+    "work"
+  ],
+  "title": "Submission",
+  "type": "object"
+}

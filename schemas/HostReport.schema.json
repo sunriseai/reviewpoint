@@ -1,0 +1,52 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "corrects_event_id": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corrects Event Id"
+    },
+    "decision_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "details": {
+      "additionalProperties": true,
+      "title": "Details",
+      "type": "object"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "acknowledged",
+        "execution_reported",
+        "outcome_reported"
+      ],
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_id",
+    "type",
+    "occurred_at",
+    "details"
+  ],
+  "title": "HostReport",
+  "type": "object"
+}

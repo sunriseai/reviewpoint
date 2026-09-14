@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "host_revision": {
+      "title": "Host Revision",
+      "type": "string"
+    },
+    "received_at": {
+      "format": "date-time",
+      "title": "Received At",
+      "type": "string"
+    },
+    "review_token": {
+      "title": "Review Token",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "submission_id": {
+      "title": "Submission Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "case_id",
+    "submission_id",
+    "revision",
+    "host_revision",
+    "content_hash",
+    "received_at",
+    "review_token"
+  ],
+  "title": "SubmissionReceipt",
+  "type": "object"
+}

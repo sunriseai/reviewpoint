@@ -1,0 +1,24 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "allowed_statuses": {
+      "items": {
+        "enum": [
+          "unmet",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "title": "Allowed Statuses",
+      "type": "array"
+    },
+    "role": {
+      "const": "owner",
+      "default": "owner",
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "title": "ExceptionRule",
+  "type": "object"
+}

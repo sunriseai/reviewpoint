@@ -1,0 +1,77 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "actor_id": {
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "authentication": {
+      "title": "Authentication",
+      "type": "string"
+    },
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "title": "Created By",
+      "type": "string"
+    },
+    "limits": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "project_key": {
+      "title": "Project Key",
+      "type": "string"
+    },
+    "role": {
+      "title": "Role",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "project_id",
+    "project_key",
+    "name",
+    "metadata",
+    "created_by",
+    "created_at",
+    "role",
+    "actor_id",
+    "version",
+    "capabilities",
+    "authentication",
+    "limits"
+  ],
+  "title": "ProjectDetail",
+  "type": "object"
+}

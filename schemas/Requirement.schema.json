@@ -1,0 +1,134 @@
+{
+  "$defs": {
+    "Applicability": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "default": "always",
+          "enum": [
+            "always",
+            "equals"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pointer"
+        },
+        "value": {
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "Applicability",
+      "type": "object"
+    },
+    "ExceptionRule": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_statuses": {
+          "items": {
+            "enum": [
+              "unmet",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "title": "Allowed Statuses",
+          "type": "array"
+        },
+        "role": {
+          "const": "owner",
+          "default": "owner",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "title": "ExceptionRule",
+      "type": "object"
+    },
+    "Method": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            "required_values",
+            "equal_values",
+            "reconcile_records",
+            "evidence_binding",
+            "semantic_review"
+          ],
+          "title": "Id",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "version": {
+          "const": 1,
+          "default": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Method",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "applicability": {
+      "$ref": "#/$defs/Applicability"
+    },
+    "check": {
+      "$ref": "#/$defs/Method"
+    },
+    "description": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "exception": {
+      "$ref": "#/$defs/ExceptionRule"
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "risk_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Risk Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "description",
+    "risk_ids",
+    "check"
+  ],
+  "title": "Requirement",
+  "type": "object"
+}

@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "answer": {
+      "enum": [
+        "yes",
+        "no"
+      ],
+      "title": "Answer",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "answer",
+    "reason"
+  ],
+  "title": "Recommendation",
+  "type": "object"
+}
