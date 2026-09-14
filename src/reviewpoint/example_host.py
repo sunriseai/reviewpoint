@@ -9,8 +9,9 @@ from pathlib import Path
 from typing import Annotated, Any
 
 import httpx
-from fastapi import Depends, FastAPI, Header
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import AwareDatetime
 
 from .demo import FIELDS, HOST, PROJECT
@@ -33,7 +34,14 @@ def attach(
     base = f"/api/v1/projects/{PROJECT}"
     case = base + "/cases/" + case_id
 
-    def human(authorization: Annotated[str | None, Header()] = None) -> Principal:
+    def human(
+        request: Request,
+        credential: Annotated[
+            HTTPAuthorizationCredentials | None,
+            Depends(HTTPBearer(auto_error=False, scheme_name="BearerIdentity")),
+        ],
+    ) -> Principal:
+        authorization = request.headers.get("authorization")
         if not authorization or not authorization.startswith("Bearer "):
             raise ServiceError(401, "unauthenticated", "Supply a demo bearer credential.")
         p = identity.authenticate(authorization[7:])

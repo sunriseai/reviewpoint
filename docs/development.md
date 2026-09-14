@@ -62,4 +62,8 @@ The guided editor preserves semantic requirements as API-managed; it does not au
 
 ## Before public release
 
-Run all checks, build a wheel and test an isolated copy of the repository. Review the release-content report and the actual file list; a scanner is not proof that arbitrary secrets or private prose are absent. The repository contains no remote configuration or package-publishing credentials. Name/package availability and shared production deployment remain separate decisions.
+Run all checks, build a wheel and test an isolated copy of the repository. CI installs the wheel into a fresh environment with locked runtime dependencies and runs `tools/check_installed.py` with only that environment on PATH, so Node is unavailable. The check verifies offline preparation/resume, integrity, backup, authenticated API access, and packaged application/documentation assets.
+
+For a manual browser check, block external requests, open `/docs`, authorize and execute a local GET, then reload and confirm credentials are cleared and no CSP errors occurred.
+
+Review the release-content report and the actual file list; a scanner is not proof that arbitrary secrets or private prose are absent. The repository contains no remote configuration or package-publishing credentials. Name/package availability and shared production deployment remain separate decisions.

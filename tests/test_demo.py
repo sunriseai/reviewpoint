@@ -164,6 +164,15 @@ def test_interactive_hold_revision_proceed_handoff_and_resume(
 def test_demo_routes_require_human_authority_and_current_approval(example):
     path, service, client, tokens, case_id = example
     assert client.get("/example-host").status_code == 401
+    spec = client.get("/openapi.json").json()
+    for route, method in (
+        ("/example-host", "get"),
+        ("/example-host/submissions", "post"),
+        ("/example-host/handoff", "post"),
+    ):
+        operation = spec["paths"][route][method]
+        assert operation["security"] == [{"BearerIdentity": []}]
+        assert all(p["name"].lower() != "authorization" for p in operation.get("parameters", []))
 
     def headers(who):
         return {"Authorization": "Bearer " + tokens[who], "Idempotency-Key": "attempt"}

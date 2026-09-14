@@ -23,6 +23,12 @@ jobs:
       - run: uv run --frozen --offline python tools/check_docs.py
       - run: uv run --frozen --offline python tools/check_release.py
       - run: uv build
+      - name: Verify installed wheel without Node
+        run: |
+          uv export --locked --no-dev --no-emit-project --no-hashes -o "$RUNNER_TEMP/wheel-requirements.txt"
+          uv venv --python ${{ matrix.python }} "$RUNNER_TEMP/wheel-env"
+          uv pip install --python "$RUNNER_TEMP/wheel-env/bin/python" -r "$RUNNER_TEMP/wheel-requirements.txt" dist/*.whl
+          PATH="$RUNNER_TEMP/wheel-env/bin" "$RUNNER_TEMP/wheel-env/bin/python" tools/check_installed.py
   frontend:
     runs-on: ubuntu-latest
     steps:
