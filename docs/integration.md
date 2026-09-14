@@ -26,6 +26,8 @@ The local adapter maps hashed bearer credentials to trusted `Principal` values. 
 | Owner | Also publish profiles, administer project access, replace/revoke decisions and resolve profile concerns |
 | Integration | Explicit project/host/workflow-scoped read, submit, evaluate and report grants; no human decisions |
 
+Membership lists and membership creation/change history are owner-only. Reviewer, approver and integration event feeds omit administrative membership events, including their reasons; normal actor attribution in review history remains visible. Event filtering happens before pagination and `upper_sequence` calculation. Cursors bind the query, caller and effective visibility; restart pagination when permissions or integration scope change.
+
 External user records are not stored here. Historical attribution survives membership changes. Deactivated membership blocks new access but does not retroactively revoke decisions. Only an owner may reevaluate a submission once it has a decision. Project bootstrap is local; there is no public project-creation endpoint or full user-management system.
 
 ## Reuse the UI

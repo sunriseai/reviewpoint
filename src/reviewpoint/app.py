@@ -584,7 +584,15 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
         after_sequence: int = Query(0, ge=0),
     ) -> dict[str, Any]:
         with service.store.transaction() as c:
-            access(c, p, project)
+            authority = access(c, p, project)
+            membership_visible = p.kind == "human" and authority["role"] == "owner"
+            grant = p.grants.get(project, {}) if p.kind == "integration" else {}
+            visibility = [
+                p.actor_id,
+                membership_visible,
+                grant.get("host_id"),
+                sorted(set(grant.get("workflow_ids", []))),
+            ]
             if case_id:
                 get_case(c, p, project, case_id)
             rows = []
@@ -596,6 +604,8 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
                 (project, after_sequence),
             ):
                 item = unpack(row)
+                if item["event_type"].startswith("membership.") and not membership_visible:
+                    continue
                 if (
                     case_id
                     and item["case_id"] != case_id
@@ -613,7 +623,7 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
                 rows,
                 limit,
                 cursor,
-                [project, "events", case_id, profile_id, after_sequence],
+                [project, "events", case_id, profile_id, after_sequence, visibility],
                 events_after=after_sequence,
             )
             return result

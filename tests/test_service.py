@@ -808,3 +808,94 @@ def test_nonfinite_domain_json_is_rejected_before_storage(service_demo):
     )
     assert response.status_code == 422
     assert h.service.store.verify()["submissions"] == 0
+
+
+@pytest.mark.parametrize("who", ["reviewer", "approver", "work-host", "owner"])
+def test_membership_events_follow_owner_visibility_before_pagination(service_demo, who):
+    h = service_demo
+    path, _, _, current = h.ready()
+    assert h.decide(path, current).status_code == 201
+    actor = Principal("reviewpoint-local-demo", "reviewer").actor_id
+    assert (
+        h.call(
+            "PUT",
+            "work/memberships",
+            body={
+                "actor_id": actor,
+                "role": "reviewer",
+                "active": True,
+                "expected_version": 1,
+                "reason": "Synthetic administrative detail",
+            },
+        ).status_code
+        == 200
+    )
+    full = h.call("GET", "work/events?limit=100", who).json()
+    membership = [e for e in full["items"] if e["event_type"].startswith("membership.")]
+    assert bool(membership) == (who == "owner")
+    if who == "owner":
+        assert {e["event_type"] for e in membership} == {"membership.created", "membership.changed"}
+    else:
+        assert "Synthetic administrative detail" not in json.dumps(full)
+        assert h.call("GET", "work/memberships", who).status_code == 403
+    assert any(e["event_type"].startswith("decision.") and e["actor_id"] for e in full["items"])
+    assert full["upper_sequence"] == max(e["event_seq"] for e in full["items"])
+    route = "work/events?limit=1"
+    first = h.call("GET", route, who).json()
+    items, cursor = list(first["items"]), first["next_cursor"]
+    while cursor:
+        result = h.call("GET", route + "&cursor=" + cursor, who)
+        assert result.status_code == 200
+        page = result.json()
+        assert page["upper_sequence"] == first["upper_sequence"]
+        items.extend(page["items"])
+        cursor = page["next_cursor"]
+    assert items == full["items"]
+    incremental = h.call(
+        "GET", "work/events?limit=100&after_sequence=" + str(first["items"][0]["event_seq"]), who
+    ).json()
+    assert incremental["items"] == full["items"][1:]
+
+
+def test_event_cursor_rejects_changed_visibility(service_demo):
+    h = service_demo
+    h.ready()
+    route = "work/events?limit=1"
+    reader_cursor = h.call("GET", route, "reviewer").json()["next_cursor"]
+    assert reader_cursor
+    actor = Principal("reviewpoint-local-demo", "reviewer").actor_id
+    for version, role, previous_cursor in [(1, "owner", reader_cursor), (2, "reviewer", None)]:
+        if previous_cursor is None:
+            previous_cursor = h.call("GET", route, "reviewer").json()["next_cursor"]
+        assert (
+            h.call(
+                "PUT",
+                "work/memberships",
+                body={
+                    "actor_id": actor,
+                    "role": role,
+                    "active": True,
+                    "expected_version": version,
+                    "reason": "Change visibility",
+                },
+            ).status_code
+            == 200
+        )
+        result = h.call("GET", route + "&cursor=" + previous_cursor, "reviewer")
+        assert result.status_code == 400
+        assert result.json()["error"]["code"] == "invalid_cursor"
+    owner_cursor = h.call("GET", route).json()["next_cursor"]
+    assert h.call("GET", route + "&cursor=" + owner_cursor, "work-host").status_code == 400
+
+
+def test_event_cursor_rechecks_integration_scope(service_demo):
+    h = service_demo
+    h.ready()
+    route = "work/events?limit=1"
+    cursor = h.call("GET", route, "work-host").json()["next_cursor"]
+    principal = h.identity.authenticate(h.tokens["work-host"])
+    principal.grants["work"]["workflow_ids"].append("other-workflow")
+    assert h.call("GET", route + "&cursor=" + cursor, "work-host").status_code == 400
+    fresh = h.call("GET", route, "work-host").json()["next_cursor"]
+    principal.grants["work"]["workflow_ids"].reverse()
+    assert h.call("GET", route + "&cursor=" + fresh, "work-host").status_code == 200
