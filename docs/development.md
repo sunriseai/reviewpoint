@@ -21,7 +21,7 @@ npm run build --prefix frontend
 
 Tests disable outbound network access and remove the provider key. Optional provider behavior uses explicit stubs. Test-only projects exercise isolation and the other check methods; the interactive demo has one example.
 
-Vite builds the complete React app into the packaged assets. Keep generated assets with frontend changes. `npm run dev --prefix frontend` watches and rebuilds; refresh the service page to load changes. CI compares generated assets and contracts for drift. No CDN is needed at runtime.
+Vite builds the complete React app into the packaged assets. Keep generated assets with frontend changes. `npm run dev --prefix frontend` watches and rebuilds; refresh the service page to load changes. CI compares generated assets and contracts for drift. No CDN is needed at runtime, including `/docs`: the build includes Swagger UI assets, a same-origin initializer and upstream license notices. Documentation permits inline style attributes and embedded images only on `/docs`; application pages retain the stricter policy.
 
 ## Tested offline walkthrough
 

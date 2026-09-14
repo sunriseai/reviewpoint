@@ -9,9 +9,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import Depends, FastAPI, Header, Query, Request
+from fastapi import Depends, FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
@@ -56,6 +57,9 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
         title="Reviewpoint HITL service",
         version="1.0.0",
         lifespan=lifespan,
+        docs_url=None,
+        redoc_url=None,
+        swagger_ui_oauth2_redirect_url=None,
         description="Local service POC. External demo identity; host owns enforcement.",
         responses={
             code: {"model": m.ErrorResponse, "description": description}
@@ -115,6 +119,10 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
             "default-src 'self'; script-src 'self'; style-src 'self'; "
             "frame-ancestors 'none'; base-uri 'none'"
         )
+        if request.url.path == "/docs":
+            response.headers["Content-Security-Policy"] += (
+                "; style-src-attr 'unsafe-inline'; img-src 'self' data:"
+            )
         return response
 
     def error(request: Request, status: int, code: str, message: str) -> JSONResponse:
@@ -156,7 +164,15 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
             request, 503, "storage_unavailable", "Storage is unavailable. Retry with the same key."
         )
 
-    def principal(authorization: Annotated[str | None, Header()] = None) -> Principal:
+    def principal(
+        request: Request,
+        credential: Annotated[
+            HTTPAuthorizationCredentials | None,
+            Depends(HTTPBearer(auto_error=False, scheme_name="BearerIdentity")),
+        ],
+    ) -> Principal:
+        # HTTPBearer describes OpenAPI security; preserve the existing wire/error semantics.
+        authorization = request.headers.get("authorization")
         if not authorization or not authorization.startswith("Bearer "):
             raise ServiceError(401, "unauthenticated", "Supply a demo bearer credential.")
         return identity.authenticate(authorization[7:])
@@ -624,6 +640,14 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
 
     assets = Path(__file__).with_name("assets")
     app.mount("/assets", StaticFiles(directory=assets), name="assets")
+
+    @app.get("/docs", include_in_schema=False)
+    def api_docs() -> FileResponse:
+        return FileResponse(assets / "swagger" / "index.html")
+
+    @app.get("/redoc", include_in_schema=False)
+    def redoc() -> RedirectResponse:
+        return RedirectResponse("/docs")
 
     @app.get("/", include_in_schema=False)
     def index() -> FileResponse:

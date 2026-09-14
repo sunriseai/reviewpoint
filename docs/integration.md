@@ -1,6 +1,6 @@
 # Integrating a host application
 
-Use the service as a decision component. The core API has no dependency on the example host or its work fields. [Generated OpenAPI](../schemas/openapi.json) and per-record JSON schemas describe the public contract; `/docs` also exposes the API locally.
+Use the service as a decision component. The core API has no dependency on the example host or its work fields. [Generated OpenAPI](../schemas/openapi.json) and per-record JSON schemas describe the public contract; `/docs` provides interactive documentation using packaged assets, with no CDN or online validator. `/redoc` redirects there. Use **Authorize** with a local bearer credential, then try an API request; credentials remain in memory and must be entered again after reload. Requests use the same authentication and idempotency rules as other clients.
 
 ## Exchange
 
