@@ -11,6 +11,7 @@ from reviewpoint.openai_transport import DEFAULT_MODEL, Transport
 
 from . import models as m
 from .evaluation import EVALUATOR_VERSION, EvaluationFailure, evaluate, validate_definition
+from .idempotency import validate_key
 from .identity import Principal, ServiceError, access, host_access
 from .storage import Store, dumps, event, insert, now, uid, unpack
 
@@ -251,8 +252,7 @@ class Service:
         action: Callable[[sqlite3.Connection, dict[str, Any], str], tuple[int, dict[str, Any]]],
         case: str | None = None,
     ) -> tuple[int, dict[str, Any]]:
-        if not key or len(key) > 200:
-            fail(400, "invalid_request_key", "A bounded Idempotency-Key is required.")
+        key = validate_key(key)
         fingerprint = digest(body)
         request_key = digest([p.actor_id, operation, key])
         with self.store.transaction(write=True) as c:

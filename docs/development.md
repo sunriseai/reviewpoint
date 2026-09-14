@@ -21,7 +21,7 @@ npm run build --prefix frontend
 
 Tests disable outbound network access and remove the provider key. Optional provider behavior uses explicit stubs. Test-only projects exercise isolation and the other check methods; the interactive demo has one example.
 
-Vite builds the complete React app into the packaged assets. Keep generated assets with frontend changes. `npm run dev --prefix frontend` watches and rebuilds; refresh the service page to load changes. CI compares generated assets and contracts for drift. No CDN is needed at runtime.
+Vite builds the complete React app into the packaged assets. Keep generated assets with frontend changes. `npm run dev --prefix frontend` watches and rebuilds; refresh the service page to load changes. CI compares generated assets and contracts for drift. No CDN is needed at runtime, including `/docs`: the build includes Swagger UI assets, a same-origin initializer and upstream license notices. Documentation permits inline style attributes and embedded images only on `/docs`; application pages retain the stricter policy.
 
 ## Tested offline walkthrough
 
@@ -56,8 +56,14 @@ Ordinary errors expose bounded messages and request IDs, without raw provider er
 4. Start `reviewpoint demo --live` or `reviewpoint serve --live`.
 5. Publish a profile containing a `semantic_review` requirement through the API, then explicitly request its evaluation.
 
+Each semantic call sends the **complete retained work, context and evidence**, submission summary and work type, proposed action, named requirement, and relevant guideline scope and risks to OpenAI. This is the full retained input, not just the citations returned by the model. The local database and its backups retain the request and validated or rejected output; public assessment responses expose filtered run metadata. `store=false` is a request setting, not an independent guarantee about provider retention.
+
 The guided editor preserves semantic requirements as API-managed; it does not author them. Each semantic check can incur a paid request. There are no automatic paid retries or model escalation. Invalid citations, refusals and incomplete output fail the assessment. The API's stored run metadata and limits describe the attempt, not an independent guarantee of model correctness or provider retention.
 
 ## Before public release
 
-Run all checks, build a wheel and test an isolated copy of the repository. Review the release-content report and the actual file list; a scanner is not proof that arbitrary secrets or private prose are absent. The repository contains no remote configuration or package-publishing credentials. Name/package availability and shared production deployment remain separate decisions.
+Run all checks, build a wheel and test an isolated copy of the repository. CI installs the wheel into a fresh environment with locked runtime dependencies and runs `tools/check_installed.py` with only that environment on PATH, so Node is unavailable. The check verifies offline preparation/resume, integrity, backup, authenticated API access, and packaged application/documentation assets.
+
+For a manual browser check, block external requests, open `/docs`, authorize and execute a local GET, then reload and confirm credentials are cleared and no CSP errors occurred.
+
+Review the release-content report and the actual file list; a scanner is not proof that arbitrary secrets or private prose are absent. The repository contains no remote configuration or package-publishing credentials. Name/package availability and shared production deployment remain separate decisions.

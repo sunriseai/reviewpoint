@@ -2,15 +2,18 @@
 
 **Risk guidelines, evidence-linked evaluation and explicit human decisions.**
 
+<img src="./docs/images/ledger.png" width=500 alt="image of a person writing in a ledger">
+
+
 Add a human review point before a host application takes a consequential action. Reviewpoint stores the submitted work and risk guidelines, evaluates the supplied material, records a person's decision and retains its history. The host owns work collection and execution.
 
 This repository provides a local FastAPI/SQLite service and a small React/Tailwind/Vite reference UX. It includes one interactive, synthetic work review. The first run needs no model or API key.
 
-![Reviewpoint work review](docs/images/review.png)
+![Reviewpoint work review](docs/images/review.jpg)
 
 ## Run the demo
 
-Requirements: Python 3.12 or 3.13 and [uv](https://docs.astral.sh/uv/getting-started/installation/). Run these commands from the repository root:
+Requirements: macOS or Linux, Python 3.12 or 3.13, and [uv](https://docs.astral.sh/uv/getting-started/installation/). Run these commands from the repository root:
 
 ```bash
 uv sync --locked

@@ -37,3 +37,18 @@ def test_release_guard_detects_accidental_artifacts(tmp_path):
     assert any("artifact" in item for item in result)
     assert any("private absolute path" in item for item in result)
     assert any("credential material" in item for item in result)
+
+
+def test_release_images_have_matching_extensions_and_limited_locations(tmp_path):
+    image = (ROOT / "docs/images/review.jpg").read_bytes()
+    images = tmp_path / "docs/images"
+    images.mkdir(parents=True)
+    (images / "review.jpg").write_bytes(image)
+    assert inspect(tmp_path) == []
+    (images / "misnamed.png").write_bytes(image)
+    assert any("does not match" in error for error in inspect(tmp_path))
+    (tmp_path / "unrelated.jpg").write_bytes(image)
+    (images / "unexpected.bin").write_bytes(b"unrelated data")
+    errors = inspect(tmp_path)
+    assert any("unrelated.jpg: unexpected" in error for error in errors)
+    assert any("unexpected.bin: unexpected" in error for error in errors)

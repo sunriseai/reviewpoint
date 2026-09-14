@@ -1,10 +1,10 @@
 # Integrating a host application
 
-Use the service as a decision component. The core API has no dependency on the example host or its work fields. [Generated OpenAPI](../schemas/openapi.json) and per-record JSON schemas describe the public contract; `/docs` also exposes the API locally.
+Use the service as a decision component. The core API has no dependency on the example host or its work fields. [Generated OpenAPI](../schemas/openapi.json) and per-record JSON schemas describe the public contract; `/docs` provides interactive documentation using packaged assets, with no CDN or online validator. `/redoc` redirects there. Use **Authorize** with a local bearer credential, then try an API request; credentials remain in memory and must be entered again after reload. Requests use the same authentication and idempotency rules as other clients.
 
 ## Exchange
 
-All resource paths below are under `/api/v1/projects/{project}`. Every mutation requires a bearer identity and `Idempotency-Key`. Keep the same key and body when retrying an uncertain request; a different body conflicts.
+All resource paths below are under `/api/v1/projects/{project}`. Every mutation requires a bearer identity and an `Idempotency-Key` containing 1–256 characters. Missing, empty or oversized keys return HTTP 400 `invalid_request_key`. Keep the same key and body when retrying an uncertain request; a different body conflicts. The example host retains suffix-based child keys when they fit and deterministically hashes longer keys with their operation, so acknowledgement and execution reporting remain distinct and retryable.
 
 1. `POST /submissions`: supply a stable host/workflow/case/checkpoint reference, host revision, work, context, evidence and exact proposed action. Set `expected_submission_id` to the prior submission or null for a new case.
 2. `POST /cases/{case}/assessments`: send the new submission ID, an exact profile reference and the current review token. Poll the returned status URL.
@@ -25,6 +25,8 @@ The local adapter maps hashed bearer credentials to trusted `Principal` values. 
 | Approver | Also evaluate undecided work, decide Yes/No and resolve case concerns |
 | Owner | Also publish profiles, administer project access, replace/revoke decisions and resolve profile concerns |
 | Integration | Explicit project/host/workflow-scoped read, submit, evaluate and report grants; no human decisions |
+
+Membership lists and membership creation/change history are owner-only. Reviewer, approver and integration event feeds omit administrative membership events, including their reasons; normal actor attribution in review history remains visible. Event filtering happens before pagination and `upper_sequence` calculation. Cursors bind the query, caller and effective visibility; restart pagination when permissions or integration scope change.
 
 External user records are not stored here. Historical attribution survives membership changes. Deactivated membership blocks new access but does not retroactively revoke decisions. Only an owner may reevaluate a submission once it has a decision. Project bootstrap is local; there is no public project-creation endpoint or full user-management system.
 

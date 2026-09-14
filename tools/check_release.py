@@ -66,7 +66,11 @@ def inspect(root: Path = ROOT) -> list[str]:
         ):
             errors.append(f"{relative}: private or generated workspace artifact")
             continue
-        if path.suffix == ".png" and relative.parts[:2] == ("docs", "images"):
+        if path.suffix in {".png", ".jpg"} and relative.parts[:2] == ("docs", "images"):
+            signature = b"\x89PNG\r\n\x1a\n" if path.suffix == ".png" else b"\xff\xd8\xff"
+            with path.open("rb") as image:
+                if not image.read(len(signature)).startswith(signature):
+                    errors.append(f"{relative}: image extension does not match its format")
             continue
         if path.suffix not in TEXT_SUFFIXES and path.name not in {
             "LICENSE",

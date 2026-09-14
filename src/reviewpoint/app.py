@@ -9,13 +9,15 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import Depends, FastAPI, Header, Query, Request
+from fastapi import Depends, FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from . import models as m
+from .idempotency import request_key
 from .identity import DemoIdentity, Principal, ServiceError, access, host_access
 from .service import Service, get_case, one, review, version
 from .storage import dumps, uid, unpack
@@ -55,6 +57,9 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
         title="Reviewpoint HITL service",
         version="1.0.0",
         lifespan=lifespan,
+        docs_url=None,
+        redoc_url=None,
+        swagger_ui_oauth2_redirect_url=None,
         description="Local service POC. External demo identity; host owns enforcement.",
         responses={
             code: {"model": m.ErrorResponse, "description": description}
@@ -114,6 +119,10 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
             "default-src 'self'; script-src 'self'; style-src 'self'; "
             "frame-ancestors 'none'; base-uri 'none'"
         )
+        if request.url.path == "/docs":
+            response.headers["Content-Security-Policy"] += (
+                "; style-src-attr 'unsafe-inline'; img-src 'self' data:"
+            )
         return response
 
     def error(request: Request, status: int, code: str, message: str) -> JSONResponse:
@@ -155,17 +164,18 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
             request, 503, "storage_unavailable", "Storage is unavailable. Retry with the same key."
         )
 
-    def principal(authorization: Annotated[str | None, Header()] = None) -> Principal:
+    def principal(
+        request: Request,
+        credential: Annotated[
+            HTTPAuthorizationCredentials | None,
+            Depends(HTTPBearer(auto_error=False, scheme_name="BearerIdentity")),
+        ],
+    ) -> Principal:
+        # HTTPBearer describes OpenAPI security; preserve the existing wire/error semantics.
+        authorization = request.headers.get("authorization")
         if not authorization or not authorization.startswith("Bearer "):
             raise ServiceError(401, "unauthenticated", "Supply a demo bearer credential.")
         return identity.authenticate(authorization[7:])
-
-    def request_key(idempotency_key: Annotated[str | None, Header()] = None) -> str:
-        if not idempotency_key or len(idempotency_key) > 256:
-            raise ServiceError(
-                400, "request_key_required", "Idempotency-Key must contain 1–256 characters."
-            )
-        return idempotency_key
 
     prefix = "/api/v1/projects/{project}"
 
@@ -584,7 +594,15 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
         after_sequence: int = Query(0, ge=0),
     ) -> dict[str, Any]:
         with service.store.transaction() as c:
-            access(c, p, project)
+            authority = access(c, p, project)
+            membership_visible = p.kind == "human" and authority["role"] == "owner"
+            grant = p.grants.get(project, {}) if p.kind == "integration" else {}
+            visibility = [
+                p.actor_id,
+                membership_visible,
+                grant.get("host_id"),
+                sorted(set(grant.get("workflow_ids", []))),
+            ]
             if case_id:
                 get_case(c, p, project, case_id)
             rows = []
@@ -596,6 +614,8 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
                 (project, after_sequence),
             ):
                 item = unpack(row)
+                if item["event_type"].startswith("membership.") and not membership_visible:
+                    continue
                 if (
                     case_id
                     and item["case_id"] != case_id
@@ -613,13 +633,21 @@ def create_app(service: Service, identity: DemoIdentity, *, worker: bool = True)
                 rows,
                 limit,
                 cursor,
-                [project, "events", case_id, profile_id, after_sequence],
+                [project, "events", case_id, profile_id, after_sequence, visibility],
                 events_after=after_sequence,
             )
             return result
 
     assets = Path(__file__).with_name("assets")
     app.mount("/assets", StaticFiles(directory=assets), name="assets")
+
+    @app.get("/docs", include_in_schema=False)
+    def api_docs() -> FileResponse:
+        return FileResponse(assets / "swagger" / "index.html")
+
+    @app.get("/redoc", include_in_schema=False)
+    def redoc() -> RedirectResponse:
+        return RedirectResponse("/docs")
 
     @app.get("/", include_in_schema=False)
     def index() -> FileResponse:

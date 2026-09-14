@@ -26,7 +26,25 @@ def example(tmp_path):
         yield path, service, client, tokens, case_id
 
 
-def test_interactive_hold_revision_proceed_handoff_and_resume(example):
+@pytest.mark.parametrize(
+    "key_length,interrupt",
+    [
+        (1, False),
+        (190, False),
+        (191, False),
+        (196, False),
+        (197, False),
+        (246, False),
+        (247, False),
+        (252, False),
+        (253, False),
+        (256, False),
+        (256, True),
+    ],
+)
+def test_interactive_hold_revision_proceed_handoff_and_resume(
+    example, monkeypatch, key_length, interrupt
+):
     path, service, client, tokens, case_id = example
     base = f"/api/v1/projects/{PROJECT}"
     case = base + "/cases/" + case_id
@@ -98,10 +116,43 @@ def test_interactive_hold_revision_proceed_handoff_and_resume(example):
         "decision_id": approved["decision_id"],
         "occurred_at": now(),
     }
-    report = call("POST", "/example-host/handoff", handoff, "handoff")
-    assert call("POST", "/example-host/handoff", handoff, "handoff") == report
+    key = "h" * key_length
+    if interrupt:
+        from reviewpoint.identity import ServiceError
+
+        original = service.report
+
+        def interrupted(p, project, case, request_key, body):
+            if body.type == "execution_reported":
+                raise ServiceError(503, "interrupted", "Synthetic uncertain failure")
+            return original(p, project, case, request_key, body)
+
+        monkeypatch.setattr(service, "report", interrupted)
+        response = client.post(
+            "/example-host/handoff",
+            json=handoff,
+            headers={
+                "Authorization": "Bearer " + tokens["owner"],
+                "Idempotency-Key": key,
+            },
+        )
+        assert response.status_code == 503
+        monkeypatch.setattr(service, "report", original)
+    report = call("POST", "/example-host/handoff", handoff, key)
+    assert call("POST", "/example-host/handoff", handoff, key) == report
+    conflict = client.post(
+        "/example-host/handoff",
+        json={**handoff, "occurred_at": now()},
+        headers={
+            "Authorization": "Bearer " + tokens["owner"],
+            "Idempotency-Key": key,
+        },
+    )
+    assert conflict.status_code == 409
+    assert conflict.json()["error"]["code"] == "idempotency_conflict"
     events = call("GET", base + "/events?case_id=" + case_id)["items"]
     assert len([e for e in events if e["event_type"] == "host.execution_reported"]) == 1
+    assert len([e for e in events if e["event_type"] == "host.acknowledged"]) == 1
     assert report["payload"]["details"]["host_action_id"].startswith("simulation:")
     assert call("GET", case + "/decisions/" + held["decision_id"])["answer"] == "no"
     assert prepare(path) == case_id
@@ -113,6 +164,15 @@ def test_interactive_hold_revision_proceed_handoff_and_resume(example):
 def test_demo_routes_require_human_authority_and_current_approval(example):
     path, service, client, tokens, case_id = example
     assert client.get("/example-host").status_code == 401
+    spec = client.get("/openapi.json").json()
+    for route, method in (
+        ("/example-host", "get"),
+        ("/example-host/submissions", "post"),
+        ("/example-host/handoff", "post"),
+    ):
+        operation = spec["paths"][route][method]
+        assert operation["security"] == [{"BearerIdentity": []}]
+        assert all(p["name"].lower() != "authorization" for p in operation.get("parameters", []))
 
     def headers(who):
         return {"Authorization": "Bearer " + tokens[who], "Idempotency-Key": "attempt"}
@@ -197,3 +257,26 @@ def test_demo_preparation_cannot_compete_with_a_running_server(tmp_path):
         with pytest.raises(ValueError, match="another service process"):
             prepare(workspace)
     assert service.store.verify()["cases"] == 0
+
+
+@pytest.mark.parametrize("key", [None, "", "x" * 257])
+@pytest.mark.parametrize("route", ["submissions", "handoff"])
+def test_example_host_rejects_invalid_keys_before_side_effects(example, key, route):
+    _, service, client, tokens, _ = example
+    before = service.store.verify()
+    headers = {"Authorization": "Bearer " + tokens["owner"]}
+    if key is not None:
+        headers["Idempotency-Key"] = key
+    body = (
+        submission().model_dump(mode="json")
+        if route == "submissions"
+        else {
+            "submission_id": "old",
+            "decision_id": "old",
+            "occurred_at": now(),
+        }
+    )
+    response = client.post("/example-host/" + route, headers=headers, json=body)
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "invalid_request_key"
+    assert service.store.verify() == before

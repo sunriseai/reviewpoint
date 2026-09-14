@@ -2,7 +2,7 @@
 
 Validated 2026-09-14 against the local reference service. This records technical evidence, not business-policy approval or a production-readiness certification.
 
-## Executed checks
+## Original baseline checks
 
 | Check | Result |
 | --- | --- |
@@ -17,6 +17,18 @@ Validated 2026-09-14 against the local reference service. This records technical
 
 Two upstream TestClient deprecation warnings remain in test output. The ordinary demo launcher does not use that test client.
 
+## Release-fix verification
+
+The follow-up changes make membership history owner-only, bind event cursors to visibility, accept 1–256-character idempotency keys consistently, and provide offline Swagger UI. Focused regressions cover reader/owner visibility, role and integration-scope changes, bounded handoff keys and recovery after a saved acknowledgement.
+
+The final suite passed on Python 3.12.0 and 3.13.2: **80 backend tests on each interpreter**, plus **12 frontend tests on Node 22.20.0**. Lint, formatting, strict types and 55 generated contracts passed. The browser check blocked every external request, rendered `/docs`, performed an authenticated GET successfully, confirmed credentials cleared after reload, and observed no console/CSP errors or failed asset requests. Neither localStorage nor sessionStorage held credentials.
+
+The existing virtual environment initially pointed at an older checkout; it was resynchronized to this repository before these results were recorded. The original baseline table above records earlier evidence, not a claim that all of it was repeated during this follow-up. A clean Git export passed release-content and documentation checks. Its frontend dependencies were installed independently from the lockfile; the rebuilt application and Swagger assets matched the checked-in output byte for byte. A wheel built from that export contained 31 entries, including required SQL, application assets, Swagger assets and license notices, with no workspace, credential, database or cache artifacts. The wheel was installed into a fresh Python 3.12 environment with locked runtime dependencies. `tools/check_installed.py` passed offline preparation/resume, integrity, backup, authenticated API and asset checks with Node unavailable. A browser check against that installed wheel also passed with external requests blocked, credentials cleared after reload, empty browser storage and no CSP/console errors.
+
+The final documentation check also verifies that optional example-host routes declare the same bearer security scheme as core routes, so Swagger sends credentials for both. A regression assertion covers these declarations.
+
+The GitHub workflow now runs the installed-wheel smoke check for both supported Python versions. These workflow commands were exercised locally; no remote CI run, publication or paid provider call was performed.
+
 ## Demonstrated behavior
 
 - The default demo computes its result without a model, starts with one synthetic case and resumes without duplicate submissions or decisions.
@@ -28,7 +40,7 @@ Two upstream TestClient deprecation warnings remain in test output. The ordinary
 
 ## Browser evidence
 
-The walkthrough above was performed in the browser through the real API, using only generated local identities and invented data. The initial [desktop review](images/review.png) was captured at a 1200 × 900 viewport. The [phone review](images/mobile.png) uses a 390 × 844 viewport; it shows the reason form immediately beneath the choices and before the recommendation explanation. Both action columns remain readable, with no observed horizontal overflow. Browser console errors/warnings were absent in the tested session.
+The walkthrough above was performed in the browser through the real API, using only generated local identities and invented data. The initial [desktop review](images/review.jpg) was captured at a 1200 × 900 viewport. The [phone review](images/mobile.jpg) uses a 390 × 844 viewport; it shows the reason form immediately beneath the choices and before the recommendation explanation. Both action columns remain readable, with no observed horizontal overflow. Browser console errors/warnings were absent in the tested session.
 
 Publishing new priorities was verified in the UI: guidelines showed v2 while the previously approved review continued to show v1. The simulated host's successful report remained distinct from the human decision. No real host workflow executed.
 

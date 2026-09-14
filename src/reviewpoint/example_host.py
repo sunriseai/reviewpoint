@@ -9,11 +9,13 @@ from pathlib import Path
 from typing import Annotated, Any
 
 import httpx
-from fastapi import Depends, FastAPI, Header
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import AwareDatetime
 
 from .demo import FIELDS, HOST, PROJECT
+from .idempotency import child_key, request_key
 from .identity import DemoIdentity, Principal, ServiceError, access
 from .models import ID, Model, Submission
 from .service import Service
@@ -32,7 +34,14 @@ def attach(
     base = f"/api/v1/projects/{PROJECT}"
     case = base + "/cases/" + case_id
 
-    def human(authorization: Annotated[str | None, Header()] = None) -> Principal:
+    def human(
+        request: Request,
+        credential: Annotated[
+            HTTPAuthorizationCredentials | None,
+            Depends(HTTPBearer(auto_error=False, scheme_name="BearerIdentity")),
+        ],
+    ) -> Principal:
+        authorization = request.headers.get("authorization")
         if not authorization or not authorization.startswith("Bearer "):
             raise ServiceError(401, "unauthenticated", "Supply a demo bearer credential.")
         p = identity.authenticate(authorization[7:])
@@ -73,7 +82,7 @@ def attach(
     async def revise(
         body: Submission,
         p: Annotated[Principal, Depends(editor)],
-        idempotency_key: Annotated[str, Header(min_length=1, max_length=256)],
+        idempotency_key: Annotated[str, Depends(request_key)],
     ) -> JSONResponse:
         expected = (HOST, "work-review", "WORK-001", "release")
         ref = body.case_ref
@@ -88,7 +97,7 @@ def attach(
     async def handoff(
         body: Handoff,
         p: Annotated[Principal, Depends(editor)],
-        idempotency_key: Annotated[str, Header(min_length=1, max_length=200)],
+        idempotency_key: Annotated[str, Depends(request_key)],
     ) -> Any:
         current = await call("GET", case + "/review")
         decision = current.get("current_decision")
@@ -122,7 +131,7 @@ def attach(
                     "message": "Example host retrieved the decision for a simulated handoff only",
                 },
             },
-            idempotency_key + ":ack",
+            child_key(idempotency_key, "ack"),
         )
         return await call(
             "POST",
@@ -138,5 +147,5 @@ def attach(
                     "proposed_action": retained["action"],
                 },
             },
-            idempotency_key + ":execution",
+            child_key(idempotency_key, "execution"),
         )
