@@ -56,6 +56,8 @@ Ordinary errors expose bounded messages and request IDs, without raw provider er
 4. Start `reviewpoint demo --live` or `reviewpoint serve --live`.
 5. Publish a profile containing a `semantic_review` requirement through the API, then explicitly request its evaluation.
 
+Each semantic call sends the **complete retained work, context and evidence**, submission summary and work type, proposed action, named requirement, and relevant guideline scope and risks to OpenAI. This is the full retained input, not just the citations returned by the model. The local database and its backups retain the request and validated or rejected output; public assessment responses expose filtered run metadata. `store=false` is a request setting, not an independent guarantee about provider retention.
+
 The guided editor preserves semantic requirements as API-managed; it does not author them. Each semantic check can incur a paid request. There are no automatic paid retries or model escalation. Invalid citations, refusals and incomplete output fail the assessment. The API's stored run metadata and limits describe the attempt, not an independent guarantee of model correctness or provider retention.
 
 ## Before public release
